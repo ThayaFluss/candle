@@ -2,9 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-data/*
-log/*
-plot/*
 # C extensions
 *.so
 
@@ -129,3 +126,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# user
+data/*
+log/*
+plot/*
+weights/*
+backup/*

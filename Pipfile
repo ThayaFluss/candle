@@ -12,6 +12,15 @@ plotly = "*"
 pandas = "*"
 psutil = "*"
 requests = "*"
+tqdm = "*"
+numpy = "*"
+scipy = "*"
+argparse = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.6"
+
+[scripts]
+preptorch = "pip3 install torch==1.1.0"
+prepvision = "pip3 install torchvision==0.2.2"
