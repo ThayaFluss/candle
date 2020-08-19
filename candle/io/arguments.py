@@ -6,6 +6,7 @@ import argparse
 import yaml
 import datetime, time
 import inspect
+import glob
 
 
 def parser_init():
@@ -67,6 +68,11 @@ def parse_device(args):
 
 
 def argsp():
+    """
+    Usage:
+        from arguments import argsp
+        args = argsp()
+    """
     parser = parser_init()
     args = parser.arg_parse()
     device = parse_device(args)
@@ -74,28 +80,70 @@ def argsp():
     return args
 
 
-def get_args_of_current_function():
+def current_args():
     current_frame = inspect.currentframe()
     parent_frame = current_frame.f_back
     info = inspect.getargvalues(parent_frame)
     return {key: info.locals[key] for key in info.args}
 
+def parent_args():
+    current_frame = inspect.currentframe()
+    parent_frame = current_frame.f_back
+    pparent_frame = parent_frame.f_back
+    info = inspect.getargvalues(pparent_frame)
+    return {key: info.locals[key] for key in info.args}
 
-def write_config(dirname):
+
+def log_dir(jobname):
+    today = datetime.datetime.fromtimestamp(time.time())
+    t = today.strftime('%Y%m%d%H%M%S')
+    dirname = "log/{}/{}".format(jobname, t)
+    return dirname
+
+
+def write_config_from_args(dirname, args):
+    """
+    e.g.
+    dirname = log_dir(jobname)
+    args = get_args_of_current_function()
+    write_config(dirname, args)
+    """
     os.makedirs(dirname, exist_ok=True)
-    additional_args = get_args_of_current_function()
     with open("{}/config.yml".format(dirname), "w" ) as f:
-        yaml.dump(additional_args,f)
+        yaml.dump(args,f)
     return
 
 
-def get_plot_dir(args):
+def write_config(jobname):
     """
-    TODO:Duplicated
+    [Caution] DO NOT write numpy. (DO NOT use numpy for config !)
     """
-    today = datetime.datetime.fromtimestamp(time.time())
-    t = today.strftime('%Y%m%d%H%M%S')
-    dirname = "plot/{}_intvl-{}_L-{}_{}".format(args.net, args.interval, args.L,t)
-    return dirname
+    dirname = log_dir(jobname)
+    print("(write_config): output dir = {}".format(dirname) )
+    os.makedirs(dirname, exist_ok=True)
+    args = parent_args()    
+    args["_config_name"] = jobname
+    write_config_from_args(dirname, args)
 
+
+def read_config(jobname):
+    """
+    Read config.yml using jobname 
+    Return a dictionary.
+    CANNOT read numpy.
+    """
+    dirnames = glob.glob("log/{}/*".format(jobname))
+    out_dict = dict()
+    for dirname in dirnames:
+        print("(read_config): input dir = {}".format(dirname) )
+        config_file = "{}/config.yml".format(dirname)
+        with open(config_file) as f:
+            try :
+                obj = yaml.load(f)
+                out_dict[dirname] = obj
+            except Exception as e:
+                print("Error of yaml.load. Check config file:{}".format(config_file))
+
+
+    return out_dict
 
