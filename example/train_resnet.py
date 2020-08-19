@@ -25,7 +25,7 @@ from candle.io.arguments import write_config, read_config, log_dir
 def main(args):
     device = parse_device(args)
     DATASET = CIFAR10
-    args.job_name =  "train_resnet_{}".format(DATASET.__name__)
+    args.jobname =  "train_resnet_{}".format(DATASET.__name__)
     dirname = log_dir(args.jobname) ### 
     net_pt = "{}/net.pt".format(dirname)
 
@@ -74,7 +74,7 @@ def main(args):
     print("Pretraining...")
     num_epoch = args.epoch
     lr = args.lr
-    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=args.momentum)
+    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
     #optimizer = torch.optim.Adam(net.parameters(), lr=lr) 
     lambda1 = lambda epoch: epoch // 20
     lambda2 = lambda epoch: 0.95 ** epoch
@@ -97,8 +97,7 @@ if __name__ == "__main__":
     args = parser.parse_args([
         "--epoch", "50",
         "--batch", "100",
-        "--lr", "2e-2",
-        "--momentum", "0.9"
+        "--lr", "2e-2"
                         ])
 
     print(args)

@@ -9,7 +9,36 @@ import inspect
 import glob
 
 
+
+
 def parser_init():
+    """
+    e.g.
+        parser = setup_parser(args)
+        args = parser.parse_args()
+    or 
+        parser = parser_init()
+        args = parser.parse_args(sys.argv[1:])
+    """
+    parser = argparse.ArgumentParser(description='Process args for ML-experiments.')
+    ###  often used
+    parser.add_argument('--jobname',  type=str, default="temp",
+                        help='job name to identify experiments (default: %(default)s)')
+    parser.add_argument('--device_id',  type=int, default=0,
+                        help='GPU id. Set -1 for cpu (default: %(default)s)')
+
+    parser.add_argument('--batch',  type=int, default=500,
+                        help='batch size for training (default: %(default)s)')
+    parser.add_argument('--lr',  type=float, default=1e-4,
+                        help='learning rate for training (default: %(default)s)')
+    parser.add_argument('--epoch',  type=int, default=5,
+                        help='max epoch (default: %(default)s)')
+
+    return parser
+
+
+
+def parser_init_MLP():
     """
     e.g.
         parser = setup_parser(args)
