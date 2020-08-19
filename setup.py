@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="candle", 
-    version="1.0.1",
+    version="1.0.4",
     author="Hayes",
     author_email="hayfluss@gmail.com",
     description="Toolkit for Pytorch",
