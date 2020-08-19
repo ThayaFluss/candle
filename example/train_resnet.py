@@ -92,13 +92,14 @@ def main(args):
 
 
 if __name__ == "__main__":
-
     #args  = argsp()
     parser = parser_init()
-    args = parser.parse_args(["--epoch", "50",
-                        "--batch", "100",
-                        "--lr", "2e-2",
-                        "--momentum", "0.9"])
+    args = parser.parse_args([
+        "--epoch", "50",
+        "--batch", "100",
+        "--lr", "2e-2",
+        "--momentum", "0.9"
+                        ])
 
     print(args)
     main(args)
