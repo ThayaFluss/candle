@@ -2,19 +2,18 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+import torch.optim as optim
+
 import torchvision
 import torchvision.transforms as transforms
-from torchvision.datasets import MNIST, FashionMNIST, SVHN
-import torch.optim as optim
+from torchvision.datasets import MNIST, FashionMNIST, SVHN, CIFAR10
+
 from tqdm import tqdm
-
-import matplotlib.pyplot as plt
 import os
-
 import scipy as sp
 import math
 
-from  candle.io.util import touch
+from candle.io.util import touch
 from candle.io.matplotlib import plotter
 
 

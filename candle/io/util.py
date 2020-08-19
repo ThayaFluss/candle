@@ -20,7 +20,6 @@ def write_config(dirname, additional_args):
     os.makedirs(dirname, exist_ok=True)
     with open("{}/config.yml".format(dirname), "w" ) as f:
         yaml.dump(additional_args,f)
-
     return
 
 def get_plot_dir(args):
