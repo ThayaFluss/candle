@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="candle", 
-    version="1.0.6",
+    name="candle_hayes",  ### Cannot be same name as package ?
+    version="1.0.7",
     author="Hayes",
     author_email="hayfluss@gmail.com",
     description="Toolkit for Pytorch",
