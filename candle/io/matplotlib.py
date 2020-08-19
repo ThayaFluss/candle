@@ -3,6 +3,7 @@ import numpy as np
 import os
 import torch
 import glob
+from .util import touch
 
 def plotter(log_file, fig_file=None,
     xlabel=None, ylabel=None):
@@ -79,28 +80,5 @@ def file_to_array(log_file):
     result = [ float(x) for x in a ]
     result = np.array(result)
     return result
-
-
-
-import yaml
-
-import time, datetime
-
-def get_plot_dir(args):
-    today = datetime.datetime.fromtimestamp(time.time())
-    t = today.strftime('%Y%m%d%H%M%S')
-    dirname = "plot/{}_intvl-{}_L-{}_{}".format(args.net, args.interval, args.L,t)
-    return dirname
-
-
-
-def write_config(dirname, additional_args):
-    os.makedirs(dirname, exist_ok=True)
-    with open("{}/config.yml".format(dirname), "w" ) as f:
-        yaml.dump(additional_args,f)
-
-    return
-
-
 
 

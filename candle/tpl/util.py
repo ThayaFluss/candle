@@ -14,11 +14,8 @@ import os
 import scipy as sp
 import math
 
-from .plot_util import touch, plotter
-#from .plot_util import plot_spectrum, plot_empirical_capacity, plot_mean,plot_spectrum_ntk
-from .plot_util import get_plot_dir, write_config
-from .util import get_args_of_current_function
-#from .models.mlp import MLP
+from  candle.io.util import touch
+from candle.io.matplotlib import plotter
 
 
 import time
@@ -275,7 +272,7 @@ def train_test(args,  net, dirname, dataset="FashionMNIST", use_MSE=True):
         train_loader, test_loader = train_test_loader(mean=0, std=1, batch_size=args.batch, DATASET=DATASET, \
             do_target_transform=True, target_dim=net.o_dim)
         #criterion = nn.MSELoss()        
-        from src.loss.mseloss import HalfMSELoss 
+        from candle.loss.mseloss import HalfMSELoss 
         criterion = HalfMSELoss()
     else:
         train_loader, test_loader = train_test_loader(mean=0, std=1, batch_size=args.batch, DATASET=DATASET)
@@ -300,57 +297,3 @@ def train_test(args,  net, dirname, dataset="FashionMNIST", use_MSE=True):
 
 
 
-def train_nets(args,
-    only_plot_mean = False,
-    use_MSE=False,
-    o_dim = 10,
-    ignore_last_layer=True):
-    """
-    Results are coollected at args.dirname.
-    Check args.dirname/config.yml.
-    """
-    device = args.device
-    dirname = get_plot_dir(args)
-    additional_args= get_args_of_current_function()
-    print(additional_args)
-    write_config(dirname, additional_args)
-
-    ### for plot_mean
-    log_files = ["test_accuracy.log", "test_loss", "train_loss.log", "mean_train_loss.log"]
-    
-    if only_plot_mean:
-        for log_file in log_files:
-            plot_mean(root_dir=dirname, filename=log_file)
-        return 
-    net_name = eval(args.net)
-
-    def _get_net():
-        net = net_name(args.L, args.dim, o_dim=o_dim)
-        return net
-
-    if args.net == "MLP":
-        net = _get_net()
-        net.initialize_weight()
-        net.to(device)
-            
-        def _run(net, dirname):
-            test_acc, test_loss = train_test(args,  net, dirname,\
-                use_MSE=use_MSE)        
-        if args.num_running == 1:
-            _run(net, dirname)
-        else:
-            for n in range(args.num_running):
-                net = _get_net()
-                net.to(device)
-                net.initialize_weight()
-
-                dirname_now = "{}/{}".format(dirname, n)
-                _run(net, dirname_now)
-
-            for log_file in log_files:
-                plot_mean(root_dir=dirname, filename=log_file)
-                test_acc, test_loss = train_test(args, net.i_var0, net, dirname,\
-                    use_MSE=use_MSE)
-            
-    else:
-        raise ValueError

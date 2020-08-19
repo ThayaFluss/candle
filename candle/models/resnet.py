@@ -34,8 +34,9 @@ class BasicBlock(nn.Module):
         self.conv1 = conv3x3(inplanes, planes, stride, dilation=dilation)
         norm_layer = nn.BatchNorm2d
         self.bn1 = norm_layer(planes)
-        self.act = nn.ReLU(inplace=True)
+        #self.act = nn.ReLU(inplace=True)
         #self.act = Nhtanh()
+        self.act = shifted_relu
 
         self.conv2 = conv3x3(planes, planes)
         self.bn2 = norm_layer(planes)
@@ -100,8 +101,10 @@ class SimpleBlock(nn.Module):
         self.conv1 = conv3x3(inplanes, planes, stride, dilation=dilation)
         norm_layer = nn.BatchNorm2d
         self.bn1 = norm_layer(planes)
-        self.act = nn.ReLU(inplace=True)
+        #self.act = nn.ReLU(inplace=True)
         #self.act = Nhtanh()
+        self.act = shifted_relu
+
 
         self.stride = stride
 
@@ -166,7 +169,7 @@ class ResNet(nn.Module):
         #self.conv = conv3x3(512,512, stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         #self.bn = nn.BatchNorm1d(512)
-        self.fc = nn.Linear(512, num_classes)
+        self.fc = nn.Linear(512, num_classes, bias=True)
         self._initialize_weights()
 
     def _initialize_weights(self):
