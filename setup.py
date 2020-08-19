@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="candle", 
-    version="1.0.4",
+    version="1.0.6",
     author="Hayes",
     author_email="hayfluss@gmail.com",
     description="Toolkit for Pytorch",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ThayaFluss/candle",
-    packageds = setuptools.find_packages(include=["candle", "candle.*"]),
+    packageds = setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
