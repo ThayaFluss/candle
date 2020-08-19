@@ -262,7 +262,7 @@ def register_save_var_grad(net, dirname):
 
     net.out.register_backward_hook(_save_var_grad)
 
-def train_test(args,  net, dirname, dataset=FashionMNIST, use_MSE=True):
+def train_test(args,  net, dirname, DATASET=FashionMNIST, use_MSE=True):
     print("------------------")
     print(dirname)
     device = args.device
