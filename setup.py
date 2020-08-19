@@ -12,8 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ThayaFluss/candle",
-    package_dir={"": "candle"},
-    packages=setuptools.find_namespace_packages(where="candle"),
+    packageds = setuptools.find_packages(include=["candle", "candle.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
