@@ -21,13 +21,20 @@ from candle.io.matplotlib import plotter
 import time
 
 def train_test_set_conv(DATASET=SVHN, shape=(3,32,32)):
+
+
+    transform = transforms.Compose(
+        [transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    """
     transform = transforms.Compose([
         transforms.ToTensor(),
         #transforms.Lambda(lambda x : x.flatten() ), 
         transforms.Lambda(lambda x : (x - torch.mean(x))/ torch.sqrt (torch.mean(x**2) )),
         transforms.Lambda(lambda x : x.reshape(shape)) 
         ])
-
+    """
     if DATASET.__name__ == "SVHN":
             train_set = DATASET(root='./data', 
                                 split="train",
@@ -40,7 +47,7 @@ def train_test_set_conv(DATASET=SVHN, shape=(3,32,32)):
                                 transform=transform,
                                 target_transform=None)
 
-    elif DATASET.__name__ == "CIFAR10T":
+    elif DATASET.__name__ in ["CIFAR10T", "CIFAT10"]:
             train_set = DATASET(root='./data/cifar10', 
                                 train=True,
                                 download=True,
@@ -116,7 +123,8 @@ def train_test_loader(mean=0., std=1, batch_size=100, test_batch_size=500, num_w
 
 
 
-def train(loader, net, optimizer, criterion=nn.CrossEntropyLoss(), device="cuda", log_dir="log", max_iter=float("inf")):
+def train(loader, net, optimizer, criterion=nn.CrossEntropyLoss(), 
+device="cuda", log_dir="log", max_iter=float("inf")):
     os.makedirs(log_dir, exist_ok=True)
     net.to(device)
     net.train()
@@ -151,8 +159,8 @@ def train(loader, net, optimizer, criterion=nn.CrossEntropyLoss(), device="cuda"
     plotter(loss_file,fig_file)
     
     
-def test(loader, net, criterion=nn.CrossEntropyLoss(), device="cuda", log_dir="log",
-debug=False): 
+def test(loader, net, criterion=nn.CrossEntropyLoss(), device="cuda", 
+log_dir="log",debug=False): 
     os.makedirs(log_dir, exist_ok=True)
     net.eval()
     net.to(device)
@@ -254,18 +262,12 @@ def register_save_var_grad(net, dirname):
 
     net.out.register_backward_hook(_save_var_grad)
 
-def train_test(args,  net, dirname, dataset="FashionMNIST", use_MSE=True):
+def train_test(args,  net, dirname, dataset=FashionMNIST, use_MSE=True):
     print("------------------")
     print(dirname)
     device = args.device
     os.makedirs(dirname, exist_ok=True)
 
-    if dataset == "FashionMNIST":
-        DATASET = FashionMNIST
-    elif dataset == "svhn" or "SVHN":
-        DATASET = SVHN
-    else:
-        DATASET = dataset
     ### data and label 
     if use_MSE:
         ### transform label to vector for MSELoss

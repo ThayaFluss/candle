@@ -1,5 +1,3 @@
-from torchvision.datasets import CIFAR10
-import torchvision.transforms as transforms
 
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -7,11 +5,15 @@ from torch.optim.lr_scheduler import LambdaLR
 import torch
 from tqdm import tqdm
 
+from torchvision.datasets import CIFAR10
+import torchvision.transforms as transforms
+
+
 import os, sys
 sys.path.append( os.path.dirname(__file__) + "/../" )
 
 
-from candle.datasets.cifar10 import CIFAR10T
+#from candle.datasets.cifar10 import CIFAR10T
 from candle.tpl.util import  train, test
 from candle.models.resnet import ResNet
 
@@ -30,7 +32,7 @@ def main():
 
     transform = transforms.Compose(
         [transforms.ToTensor(),
-        transforms.Normalize((0., 0., 0.), (0.5, 0.5, 0.5))])
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 
     train_set = DATASET(root='./data/cifar10', 
@@ -66,19 +68,16 @@ def main():
     print("Pretraining...")
     num_epoch = 50
     lr = 2e-2
-    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
-    #optimizer = torch.optim.Adam(net.parameters(), lr=2e-2 ) 
+    #optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
+    optimizer = torch.optim.Adam(net.parameters(), lr=lr) 
     lambda1 = lambda epoch: epoch // 20
     lambda2 = lambda epoch: 0.95 ** epoch
     scheduler = LambdaLR(optimizer, lambda2 )
      
 
-    for _ in range(num_epoch):
-        print("epoch:{}".format(_))
-        net.to(device)
-        train(train_loader, net, optimizer, device=device, log_dir=dirname
-        #,max_iter=50
-        )
+    for _ in tqdm(num_epoch):
+        #print("epoch:{}".format(_))
+        train(train_loader, net, optimizer, device=device, log_dir=dirname)
         scheduler.step()
         test(test_loader, net, device=device, log_dir=dirname, debug=True)
 
