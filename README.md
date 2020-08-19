@@ -1,5 +1,6 @@
 # Candle
 Tools for pytorch
+- Version: v1.0
 
 ## Requiements:
     python 3.6 
