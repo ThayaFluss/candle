@@ -17,17 +17,23 @@ sys.path.append( os.path.dirname(__file__) + "/../" )
 from candle.tpl.util import  train, test
 from candle.models.resnet import ResNet
 
+from candle.io.arguments import parser_init, parse_device
+from candle.io.arguments import write_config, read_config, log_dir
 
 
-def main():
-    device = "cuda"
+
+def main(args):
+    device = parse_device(args)
     DATASET = CIFAR10
-    task_name = "train_resnet_{}".format(DATASET.__name__)
-    os.makedirs("log", exist_ok=True)
-    dirname = "log/{}".format(task_name)
-    os.makedirs("weights", exist_ok=True)
-    net_pt = "weights/{}_net.pt".format(task_name)
+    args.job_name =  "train_resnet_{}".format(DATASET.__name__)
+    dirname = log_dir(args.jobname) ### 
+    net_pt = "{}/net.pt".format(dirname)
+
     net = ResNet(num_classes=10)
+    args.net = "ResNet"
+    write_config(dirname)
+    temp_dict = read_config(dirname) ## for testing read & write
+    
     net.to(device)
 
     transform = transforms.Compose(
@@ -66,16 +72,16 @@ def main():
     
     ### pretrain
     print("Pretraining...")
-    num_epoch = 50
-    lr = 2e-2
-    #optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
-    optimizer = torch.optim.Adam(net.parameters(), lr=lr) 
+    num_epoch = args.epoch
+    lr = args.lr
+    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=args.momentum)
+    #optimizer = torch.optim.Adam(net.parameters(), lr=lr) 
     lambda1 = lambda epoch: epoch // 20
     lambda2 = lambda epoch: 0.95 ** epoch
     scheduler = LambdaLR(optimizer, lambda2 )
      
 
-    for _ in tqdm(num_epoch):
+    for _ in tqdm(range(num_epoch)):
         #print("epoch:{}".format(_))
         train(train_loader, net, optimizer, device=device, log_dir=dirname)
         scheduler.step()
@@ -86,4 +92,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    #args  = argsp()
+    parser = parser_init()
+    args = parser.parse_args(["--epoch", "50",
+                        "--batch", "100",
+                        "--lr", "2e-2",
+                        "--momentum", "0.9"])
+
+    print(args)
+    main(args)

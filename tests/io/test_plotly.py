@@ -4,8 +4,8 @@ from candle.io.util import touch
 
 class TestPlotly(unittest.TestCase):
     def test_plotter(self):
-        filename = "log/tests/test_plotly_plotter.log"
-        figfile = "plot/tests/test_plotly_plotter.png"
+        filename = "log/temp/test_plotly_plotter.log"
+        figfile = "plot/temp/test_plotly_plotter.png"
         touch(filename)
         touch(figfile)
 

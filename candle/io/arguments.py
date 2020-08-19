@@ -20,7 +20,7 @@ def parser_init():
     """
     parser = argparse.ArgumentParser(description='Process args for ML-experiments.')
     ###  often used
-    parser.add_argument('--job_name',  type=str, default="temp",
+    parser.add_argument('--jobname',  type=str, default="temp",
                         help='job name to identify experiments (default: %(default)s)')
     parser.add_argument('--device_id',  type=int, default=0,
                         help='GPU id. Set -1 for cpu (default: %(default)s)')
@@ -74,7 +74,7 @@ def argsp():
         args = argsp()
     """
     parser = parser_init()
-    args = parser.arg_parse()
+    args = parser.parse_args()
     device = parse_device(args)
     args.device = device
     return args
@@ -98,6 +98,7 @@ def log_dir(jobname):
     today = datetime.datetime.fromtimestamp(time.time())
     t = today.strftime('%Y%m%d%H%M%S')
     dirname = "log/{}/{}".format(jobname, t)
+    os.makedirs(dirname)
     return dirname
 
 
@@ -114,36 +115,31 @@ def write_config_from_args(dirname, args):
     return
 
 
-def write_config(jobname):
+def write_config(dirname):
     """
     [Caution] DO NOT write numpy. (DO NOT use numpy for config !)
     """
-    dirname = log_dir(jobname)
     print("(write_config): output dir = {}".format(dirname) )
     os.makedirs(dirname, exist_ok=True)
     args = parent_args()    
-    args["_config_name"] = jobname
+    args["_dirname"] = dirname
     write_config_from_args(dirname, args)
 
 
-def read_config(jobname):
+def read_config(dirname):
     """
     Read config.yml using jobname 
     Return a dictionary.
     CANNOT read numpy.
     """
-    dirnames = glob.glob("log/{}/*".format(jobname))
-    out_dict = dict()
-    for dirname in dirnames:
-        print("(read_config): input dir = {}".format(dirname) )
-        config_file = "{}/config.yml".format(dirname)
-        with open(config_file) as f:
-            try :
-                obj = yaml.load(f)
-                out_dict[dirname] = obj
-            except Exception as e:
-                print("Error of yaml.load. Check config file:{}".format(config_file))
+    print("(read_config): input dir = {}".format(dirname) )
+    config_file = "{}/config.yml".format(dirname)
+    with open(config_file) as f:
+        try :
+            dictionaly= yaml.load(f)
+        except Exception as e:
+            print("Error of yaml.load. Check config file:{}".format(config_file))
 
 
-    return out_dict
+    return dictionaly
 
